@@ -1,7 +1,7 @@
 # versatiledict
-Extension of python dict object. When you use json file with Python,you should use json module. It is a good module, but it is too difficult to navigate deep json data like to below:
+Extension of python dict object for JSON data. When you use json file with Python,you should use json module. It is a good module, but it is too difficult to navigate deep json data like to below:
 
-
+~~~
  "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
     "id": "38118",
     "self": "http://jira.mysystem.com/rest/api/latest/issue/38118",
@@ -30,5 +30,5 @@ Extension of python dict object. When you use json file with Python,you should u
                         "statusCategory": {
                             "self": "http://jira.mysystem.com/rest/api/2/statuscategory/3",
                             "id": 3,
-
+~~~
 With VersatileDict, you can use it more easer than json module.
