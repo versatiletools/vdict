@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+
+# Copyright: Sungho Park(chywoo@gmail.com)
+# License: MIT
+# URL: https://github.com/chywoo/versatiledict
+#
+#
+
+"""
+Versatile Dicionary Library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+"""
 __author__ = 'Sungho Park'
 
 import json
@@ -10,7 +24,8 @@ def is_number(data):
     except ValueError:
         return False
 
-class VersatileDict:
+
+class vdict:
     """
     Manipulate multiple layered multiple data type.
     """
@@ -23,8 +38,12 @@ class VersatileDict:
 
         if isinstance(obj, self.__class__):
             self._data = obj._data
-        else:
+        elif isinstance(obj, dict):
             self._data = obj
+        elif isinstance(obj, str):
+            self._data = json.loads(obj)
+        else:
+            raise TypeError("Not supported data type. Support types are dict and vdict.")
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -42,6 +61,9 @@ class VersatileDict:
             return json.dumps(self._data)
         else:
             return self
+
+    def __len__(self):
+        return len(self._data)
 
     def add(self, keypath, value):
         """
@@ -106,7 +128,7 @@ class VersatileDict:
             except TypeError as e :
                 raise KeyError("Data type of the key is not match. %s" % e.args[0])
 
-    def value(self, keystring=None):
+    def get(self, keystring=None):
         """
         Get value from JSON format data. Input key path(key1/key2/key3) and get the value.
         :param keystring: Key path
@@ -117,9 +139,7 @@ class VersatileDict:
             return self._data
 
         result = self._data
-
         keys = keystring.split("/")
-
 
         for key in keys:
             if key == '': # skip blank ex)first '/' at '/fields/description'
@@ -133,6 +153,9 @@ class VersatileDict:
                 except ValueError as e:
                     raise KeyError("'%s' is not index value of List. Type of the value is List. Index must be integer." % key)
 
+        if isinstance(result, dict) or isinstance(result, list):
+            tmp = json.dumps(result)
+            result = vdict(tmp)
         return result
 
     def json(self):
