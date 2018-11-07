@@ -1,4 +1,4 @@
-# versatiledict
+# vdict (Versatile Dictionary)
 Extension of python dict object for JSON data. When you use json file with Python,you should use json module. It is a good module, but it is too difficult to navigate deep json data like to below:
 
 ~~~
@@ -31,4 +31,4 @@ Extension of python dict object for JSON data. When you use json file with Pytho
                             "self": "http://jira.mysystem.com/rest/api/2/statuscategory/3",
                             "id": 3,
 ~~~
-With VersatileDict, you can use it more easer than json module.
+With vdict, you can use it more easer than json module.
