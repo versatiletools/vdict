@@ -1,6 +1,12 @@
+#
+# Copyright (c) 2018 Sungho Park(chywoo@gmail.com)
+# This file is under MIT license.
+#
+
 __author__ = 'Sungho Park'
 
 import json
+import copy
 
 
 def is_number(data):
@@ -10,21 +16,37 @@ def is_number(data):
     except ValueError:
         return False
 
-class VersatileDict:
+class vdict:
     """
     Manipulate multiple layered multiple data type.
     """
     _data = None
+    _error_data = None
 
-    def __init__(self, obj=None):
-        if obj is None:
+    def __init__(self, data=None, deep=False):
+        if data is None:
             self._data = None
             return
 
-        if isinstance(obj, self.__class__):
-            self._data = obj._data
+        if isinstance(data, str):
+            self._data = json.loads(data)
         else:
-            self._data = obj
+            if isinstance(data, self.__class__):
+                temp = data._data
+            elif is_number(data, str):
+                pass
+            elif isinstance(data, dict):
+                temp = data
+            else:
+                raise TypeError("Not supported data type.")
+
+            if deep:    # deep copy
+                self._data = copy.deepcopy(temp)
+            else:
+                self._data = temp
+
+    def __len__(self):
+        return len(self._data)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -34,7 +56,7 @@ class VersatileDict:
 
     def __setattr__(self, key, value):
         if self.__dict__.get("_locked") and key == "data":
-            raise AttributeError("VersatileDict does not allow assignment to .data memeber.")
+            raise AttributeError("vdict does not allow assignment to .data memeber.")
         self.__dict__[key] = value
 
     def __repr__(self):
@@ -42,6 +64,17 @@ class VersatileDict:
             return json.dumps(self._data)
         else:
             return self
+
+    def __setitem__(self, key, value):
+        self.add(key, value)
+
+    def __getitem__(self, item):
+        r = self.get(item)
+
+        if r is None:
+            raise KeyError(self._error_data)
+        else:
+            return r
 
     def add(self, keypath, value):
         """
@@ -106,32 +139,37 @@ class VersatileDict:
             except TypeError as e :
                 raise KeyError("Data type of the key is not match. %s" % e.args[0])
 
-    def value(self, keystring=None):
+    def get(self, key_path=None):
         """
-        Get value from JSON format data. Input key path(key1/key2/key3) and get the value.
-        :param keystring: Key path
+        Get value. Input key path(key1/key2/key3) and get the value.
+        :param key_path: Key path
         :return: Value
         """
 
-        if keystring is None:
+        if key_path is None:
             return self._data
 
         result = self._data
 
-        keys = keystring.split("/")
-
+        keys = key_path.split("/")
+        self._error_data = ""
 
         for key in keys:
             if key == '': # skip blank ex)first '/' at '/fields/description'
                 continue
+            else:
+                self._error_data += "/%s" % key
 
             if isinstance(result, dict):
-                result = result[key]
+                try:
+                    result = result[key]
+                except KeyError as e:
+                    return None
             elif isinstance(result, list):
                 try:
                     result = result[int(key)]
                 except ValueError as e:
-                    raise KeyError("'%s' is not index value of List. Type of the value is List. Index must be integer." % key)
+                    return None
 
         return result
 
