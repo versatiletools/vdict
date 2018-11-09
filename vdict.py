@@ -33,8 +33,6 @@ class vdict:
         else:
             if isinstance(data, self.__class__):
                 temp = data._data
-            elif is_number(data, str):
-                pass
             elif isinstance(data, dict):
                 temp = data
             else:
@@ -175,4 +173,3 @@ class vdict:
 
     def json(self):
         return json.dumps(self._data)
-
