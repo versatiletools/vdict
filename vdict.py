@@ -67,12 +67,7 @@ class vdict:
         self.add(key, value)
 
     def __getitem__(self, item):
-        r = self.get(item)
-
-        if r is None:
-            raise KeyError(self._error_data)
-        else:
-            return r
+        return self.__get(item)
 
     def add(self, keypath, value):
         """
@@ -137,9 +132,9 @@ class vdict:
             except TypeError as e :
                 raise KeyError("Data type of the key is not match. %s" % e.args[0])
 
-    def get(self, key_path=None):
+    def __get(self, key_path=None):
         """
-        Get value. Input key path(key1/key2/key3) and get the value.
+        Get value internal method. Input key path(key1/key2/key3) and get the value.
         :param key_path: Key path
         :return: Value
         """
@@ -153,23 +148,32 @@ class vdict:
         self._error_data = ""
 
         for key in keys:
-            if key == '': # skip blank ex)first '/' at '/fields/description'
+            if key == '':  # skip blank ex)first '/' at '/fields/description'
                 continue
             else:
-                self._error_data += "/%s" % key
+                if self._error_data == "" and key_path[0] != '/':
+                    self._error_data = "%s" % key
+                else:
+                    self._error_data += "/%s" % key
 
             if isinstance(result, dict):
-                try:
-                    result = result[key]
-                except KeyError as e:
-                    return None
+                result = result[key]
             elif isinstance(result, list):
-                try:
-                    result = result[int(key)]
-                except ValueError as e:
-                    return None
+                result = result[int(key)]
 
         return result
+
+    def get(self, key_path=None):
+        """
+        Get value. Input key path(key1/key2/key3) and get the value.
+        :param key_path: Key path
+        :return: Value
+        """
+
+        try:
+            return self.__get(key_path)
+        except KeyError as e:
+            return None
 
     def json(self):
         return json.dumps(self._data)
