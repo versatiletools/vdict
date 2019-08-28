@@ -1,5 +1,5 @@
 import unittest
-from vdict import vdict
+from vdict.vdict import vdict
 
 json_data = """
 {

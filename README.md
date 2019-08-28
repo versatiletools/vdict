@@ -1,6 +1,6 @@
 # Overview
 ## What is vdict?
-vdict(Versatile Dictionary) is a extension of python dict object for JSON data.
+vdict(Versatile Dictionary) is a extension of python dict object for manipulate structured data such as a JSON data.
 
 ## Why use this?
 

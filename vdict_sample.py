@@ -1,4 +1,4 @@
-from vdict import vdict
+from vdict.vdict import vdict
 
 import json
 
