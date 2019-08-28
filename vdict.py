@@ -1,28 +1,12 @@
-# -*- coding: utf-8 -*-
-
-# Copyright: Sungho Park(chywoo@gmail.com)
-# License: MIT
-# URL: https://github.com/chywoo/versatiledict
+#
+# Copyright (c) 2018 Sungho Park(chywoo@gmail.com)
+# This file is under MIT license.
 #
 
-"""
-Versatile Dicionary Library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-"""
 __author__ = 'Sungho Park'
 
 import json
 import copy
-
-
-def is_number(data):
-    try:
-        int(data)
-        return True
-    except ValueError:
-        return False
 
 
 class vdict:
@@ -30,7 +14,6 @@ class vdict:
     Manipulate multiple layered multiple data type.
     """
     _data = None
-    _error_data = None
 
     def __init__(self, data=None, deep=False):
         if data is None:
@@ -78,6 +61,20 @@ class vdict:
     def __getitem__(self, item):
         return self.__get(item)
 
+    def is_number(data):
+        try:
+            int(data)
+            return True
+        except ValueError:
+            return False
+
+    def _is_number(data):
+        try:
+            int(data)
+            return True
+        except ValueError:
+            return False
+
     def add(self, keypath, value):
         """
         Add list or dictionary data with key path
@@ -97,7 +94,7 @@ class vdict:
             if keys[i] == '':
                 continue
 
-            if is_number(key):
+            if self._is_number(key):
                 key = int(key)
                 is_data_list = True
             else:
@@ -123,13 +120,13 @@ class vdict:
             try:
                 result = result[key]
             except KeyError:
-                if is_number(keys[i + 1]):
+                if self._is_number(keys[i + 1]):
                     result[key] = []
                 else:
                     result[key] = {}
                 result = result[key]
             except IndexError:
-                if is_number(keys[i + 1]):
+                if self._is_number(keys[i + 1]):
                     result.append([])
                 else:
                     result.append({})
