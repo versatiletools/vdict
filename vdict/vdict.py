@@ -61,14 +61,7 @@ class vdict:
     def __getitem__(self, item):
         return self.__get(item)
 
-    def is_number(data):
-        try:
-            int(data)
-            return True
-        except ValueError:
-            return False
-
-    def _is_number(data):
+    def _is_number(self, data):
         try:
             int(data)
             return True
