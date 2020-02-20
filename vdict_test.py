@@ -33,7 +33,19 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
 
         self.assertEqual(test_dict.attr1, test_dict['attr1'], "The values by attribute and brace must be the same.")
 
+    def test_2_constuctors(self):
+        list_data = vdict([1, 2, "3"])
+        dict_data = vdict({"a": 1, "b": 2, "c": "3"})
 
+        print(f"list_data[0] = f{list_data[0]}")
+        print(f"list_data[1] = f{list_data[1]}")
+        print(f"list_data[2] = f{list_data[2]}")
+        print(f"list_data['0'] = f{list_data['0']}")
+        print(f"list_data['1'] = f{list_data['1']}")
+        print(f"list_data['2'] = f{list_data['2']}")
+
+        self.assertRaises(Exception, list_data["a"])
+        self.assertRaises(Exception, list_data.a)
 
 #     def test_setget(self):
 #         test_dict = vdict()
