@@ -1,5 +1,3 @@
-from vdict.vdict import vdict
-
 import json
 
 
@@ -27,6 +25,44 @@ data = """
     }
 }
 """
+
+data2 = '{ "type": "CONNECT" }'
+
+# from addict import Dict
+#
+# data = Dict()
+# data.a="data a"
+# print(data.a)
+# print(data["a"])
+# print(data["b"])
+#
+# data.b.c="data c"
+# print(data.b.__class__)
+# print(data.b.c)
+#
+# exit(0)
+
+from vdict.vdict import vdict
+test_dict = vdict()
+
+test_dict.attr1 = "test data"
+print(f"test_dict.attr1={test_dict.attr1}")
+print(f"test_dict.attr1={test_dict['attr1']}")
+
+test_dict.attr2.attr3.a="a"
+print(f"test_dict.attr2.attr3.a={test_dict.attr2.attr3.a}")
+
+test_dict.attr1.b="c"
+exit(0)
+
+data = vdict(data)
+data.a="data a"
+print(f"data.a={data.a}")
+print(f"data['a'] = {data['a']}")
+
+exit(0)
+data.b.c="data c"
+
 
 dict_obj = json.loads(data)
 vdict_obj = vdict(data, True)

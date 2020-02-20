@@ -14,14 +14,20 @@ class vdict:
     Manipulate multiple layered multiple data type.
     """
     _data = None
+    __prev_key = None
+    __prev_dict = _data
 
     def __init__(self, data=None, deep=False):
+        object.__setattr__(self, "__prev_key", None)
+        object.__setattr__(self, "__prev_dict", self._data)
+
         if data is None:
-            self._data = None
             return
 
         if isinstance(data, str):
-            self._data = json.loads(data)
+            # if the below code look as "self._data = XXX", self.__setattr__ function is being called.
+            # Therefore, object.__setattr__ must be used to prevent from calling self.__setattr__.
+            object.__setattr__(self, "_data", json.loads(data))
         else:
             if isinstance(data, self.__class__):
                 temp = data._data
@@ -31,9 +37,9 @@ class vdict:
                 raise TypeError("Not supported data type.")
 
             if deep:    # deep copy
-                self._data = copy.deepcopy(temp)
+                object.__setattr__(self, "_data", copy.deepcopy(temp))
             else:
-                self._data = temp
+                object.__setattr__(self, "_data", temp)
 
     def __len__(self):
         return len(self._data)
@@ -44,10 +50,14 @@ class vdict:
         else:
             return False
 
+    # data.key
+    def __getattr__(self, key):
+        return self.__getitem__(key)
+
     def __setattr__(self, key, value):
         if self.__dict__.get("_locked") and key == "data":
             raise AttributeError("vdict does not allow assignment to .data memeber.")
-        self.__dict__[key] = value
+        self.add(key, value)
 
     def __repr__(self):
         if self._data is not None:
@@ -58,8 +68,23 @@ class vdict:
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def __getitem__(self, item):
-        return self.__get(item)
+    # data['key']
+    def __getitem__(self, key):
+        try:
+            if self.__prev_key is not None:
+                o = self.__prev_dict[key]
+            else:
+                o = self._data[key]
+
+            object.__setattr__(self, "__prev_key", None)
+            object.__setattr__(self, "__prev_dict", o)
+            return o
+        except Exception as e:
+            # object.__setattr__(self, "_data", {})
+            self._data[key] = {}
+            object.__setattr__(self, "__prev_key", key)
+            object.__setattr__(self, "__prev_dict", self._data[key])
+            return self
 
     def _is_number(self, data):
         try:
@@ -82,6 +107,7 @@ class vdict:
         result = self._data
         key_size = len(keys)
 
+        # loop of keys.
         for i in range(key_size):
             key = keys[i]
             if keys[i] == '':
@@ -89,21 +115,21 @@ class vdict:
 
             if self._is_number(key):
                 key = int(key)
-                is_data_list = True
+                is_list = True
             else:
-                is_data_list = False
+                is_list = False
 
             # Initialize self._data
             if self._data is None:
-                if is_data_list:     # if true, the first data is list
+                if is_list:     # if true, the first data is list
                     result = []
                 else:
-                    result = {}                 # else, the first data is dictionary
+                    result = {}      # else, the first data is dictionary
 
-                self._data = result
+                object.__setattr__(self, "_data", result)
 
             if i + 1 == key_size:
-                if is_data_list:
+                if is_list:
                     result.append(value)
                 else:
                     result[key] = value
