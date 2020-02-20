@@ -37,12 +37,12 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         list_data = vdict([1, 2, "3"])
         dict_data = vdict({"a": 1, "b": 2, "c": "3"})
 
-        print(f"list_data[0] = f{list_data[0]}")
-        print(f"list_data[1] = f{list_data[1]}")
-        print(f"list_data[2] = f{list_data[2]}")
-        print(f"list_data['0'] = f{list_data['0']}")
-        print(f"list_data['1'] = f{list_data['1']}")
-        print(f"list_data['2'] = f{list_data['2']}")
+        print(f"list_data[0]   = {list_data[0]}")
+        print(f"list_data[1]   = {list_data[1]}")
+        print(f"list_data[2]   = {list_data[2]}")
+        print(f"list_data['0'] = {list_data['0']}")
+        print(f"list_data['1'] = {list_data['1']}")
+        print(f"list_data['2'] = {list_data['2']}")
 
         self.assertRaises(Exception, list_data["a"])
         self.assertRaises(Exception, list_data.a)
@@ -53,6 +53,39 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         test_dict.a = 1
         self.assertRaises(KeyError, test_dict.b)
         self.assertRaises(KeyError, test_dict['b'])
+
+    def test_5_setget_by_braces(self):
+        name = vdict()
+
+        name["given"] = "Sungho"
+        name["family"] = "Park"
+
+        info = vdict()
+        info["name"] = name
+
+        data3 = {"phone": "123-4567", "addr": {"city": "Seoul", "country": "Korea"}}
+        info["etc"] = data3
+
+        self.assertEqual(info["name/given"], "Sungho")
+        self.assertEqual(info["name/family"], "Park")
+        self.assertEqual(info["name"], name)
+        self.assertEqual(info["name/addr/city"], "Seoul")
+
+    def test_6_setget_by_attrs(self):
+        test_dict = vdict()
+
+        data = "data"
+        test_dict.prop1 = data
+        self.assertEqual(data, test_dict.prop1)
+
+        data = {"file1", "file2"}
+        test_dict.dir1.files = data
+        self.assertEqual(data, test_dict.dir1.files)
+
+        data = [1, 2, 3]
+        test_dict.dir1.seq = data
+        self.assertEqual(data, test_dict.dir1.seq)
+
 
 #     def test_setget(self):
 #         test_dict = vdict()
