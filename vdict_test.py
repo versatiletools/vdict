@@ -47,12 +47,31 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertRaises(Exception, list_data["a"])
         self.assertRaises(Exception, list_data.a)
 
-    def test_3_keyerror(self):
+    def test_3_errors(self):
         test_dict = vdict()
 
         test_dict.a = 1
-        self.assertRaises(KeyError, test_dict.b)
-        self.assertRaises(KeyError, test_dict['b'])
+        with self.assertRaises(KeyError):
+            test_dict['b']
+        self.assertIsNone(test_dict.get('b'))
+        self.assertEqual({}, test_dict.b)
+
+        test_dict.attr1.attr2.attr3 = 1
+        test_dict.attr1.attr2.attr4 = 2
+
+        with self.assertRaises(KeyError):
+            test_dict["attr1/attr2/attr5"]
+
+        with self.assertRaises(KeyError):
+            test_dict["attr1.attr3.attr2"]
+
+        self.assertIsNone(test_dict.get("attr1/attr2/attr5"))
+        self.assertIsNone(test_dict.get("attr1.attr3.attr2"))
+        self.assertEqual({}, test_dict.attr1.attr2.attr5)
+        self.assertEqual({}, test_dict.attr1.attr3.attr2)
+
+        with self.assertRaises(AttributeError):
+            test_dict.attr1.attr2.attr3.new_data = 1
 
     def test_5_setget_by_braces(self):
         name = vdict()
@@ -85,6 +104,17 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         data = [1, 2, 3]
         test_dict.dir1.seq = data
         self.assertEqual(data, test_dict.dir1.seq)
+
+        test_dict = vdict()
+        test_dict.attr1.attr2.attr3={"item1": 1, "item2": 2}
+        self.assertEqual(test_dict.attr1.attr2.attr3.item1, 1)
+        self.assertEqual(test_dict.attr1.attr2.attr3.item2, 2)
+
+        self.assertEqual(test_dict["attr1/attr2/attr3/item1"], 1)
+        self.assertEqual(test_dict["attr1/attr2/attr3/item2"], 2)
+
+        self.assertEqual(test_dict.get("attr1/attr2/attr3/item1"), 1)
+        self.assertEqual(test_dict.get("attr1/attr2/attr3/item2"), 2)
 
 
 #     def test_setget(self):
