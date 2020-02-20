@@ -47,6 +47,13 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertRaises(Exception, list_data["a"])
         self.assertRaises(Exception, list_data.a)
 
+    def test_3_keyerror(self):
+        test_dict = vdict()
+
+        test_dict.a = 1
+        self.assertRaises(KeyError, test_dict.b)
+        self.assertRaises(KeyError, test_dict['b'])
+
 #     def test_setget(self):
 #         test_dict = vdict()
 #
