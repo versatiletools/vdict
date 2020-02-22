@@ -47,6 +47,9 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertRaises(Exception, list_data["a"])
         self.assertRaises(Exception, list_data.a)
 
+        json_dict = vdict('{ "type": "CONNECT" }')
+        self.assertEqual(json_dict["type"], "CONNECT")
+
     def test_3_errors(self):
         test_dict = vdict()
 

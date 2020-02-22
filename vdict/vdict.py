@@ -9,6 +9,13 @@ import json
 import copy
 
 class vdict(dict):
+    def __init__(self, seq=None):
+        if seq is None:
+            return
+
+        if isinstance(seq, str):
+            self = json.loads(seq)
+
     def __getattr__(self, item):
         """
         Get value of specified attributes.
