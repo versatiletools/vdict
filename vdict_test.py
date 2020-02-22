@@ -34,18 +34,14 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(test_dict.attr1, test_dict['attr1'], "The values by attribute and brace must be the same.")
 
     def test_2_constuctors(self):
-        list_data = vdict([1, 2, "3"])
         dict_data = vdict({"a": 1, "b": 2, "c": "3"})
 
-        print(f"list_data[0]   = {list_data[0]}")
-        print(f"list_data[1]   = {list_data[1]}")
-        print(f"list_data[2]   = {list_data[2]}")
-        print(f"list_data['0'] = {list_data['0']}")
-        print(f"list_data['1'] = {list_data['1']}")
-        print(f"list_data['2'] = {list_data['2']}")
+        print(f"dict_data['a']   = {dict_data['a']}")
+        print(f"dict_data['b']   = {dict_data['b']}")
+        print(f"dict_data['c']   = {dict_data['c']}")
 
-        self.assertRaises(Exception, list_data["a"])
-        self.assertRaises(Exception, list_data.a)
+        self.assertRaises(Exception, dict_data["a"])
+        self.assertRaises(Exception, dict_data.a)
 
         json_dict = vdict('{ "type": "CONNECT" }')
         self.assertEqual(json_dict["type"], "CONNECT")
@@ -91,7 +87,7 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(info["name/given"], "Sungho")
         self.assertEqual(info["name/family"], "Park")
         self.assertEqual(info["name"], name)
-        self.assertEqual(info["name/addr/city"], "Seoul")
+        self.assertEqual(info["etc/addr/city"], "Seoul")
 
     def test_6_setget_by_attrs(self):
         test_dict = vdict()

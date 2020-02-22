@@ -14,7 +14,13 @@ class vdict(dict):
             return
 
         if isinstance(seq, str):
-            self = json.loads(seq)
+            self.update(json.loads(seq))
+        elif isinstance(seq, self.__class__):
+            self.update(seq)
+        elif isinstance(seq, dict):
+            self.update(seq)
+        else:
+            raise TypeError("Not supported data type.")
 
     def __getattr__(self, item):
         """
@@ -43,6 +49,12 @@ class vdict(dict):
         else:
             self[key] = value
 
+    def __setitem__(self, key, value):
+        if isinstance(value, dict):
+            value = vdict(value)
+
+        super().__setitem__(key, value)
+
     def __getitem__(self, item):
         return self.__get(item)
 
@@ -69,10 +81,12 @@ class vdict(dict):
                 else:
                     _error_data += "/%s" % key
 
-            if isinstance(data, dict):
+            if isinstance(data, vdict):
                 data = super(vdict, data).get(key)
+            elif isinstance(data, dict):    # class dict doesn't have super class.
+                data = data.get(key)
             elif isinstance(data, list):
-                data = super(vdict, data).get(int(key))
+                data = data.get(int(key))
 
             if data is None:
                 raise KeyError(_error_data)
