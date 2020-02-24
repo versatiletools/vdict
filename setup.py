@@ -23,6 +23,6 @@ setup(
     ],
     description=SHORT,
     long_description=LONG,
-    test_suite='test_addict',
+    test_suite='vdict_test',
     package_data={'': ['LICENSE']}
 )
