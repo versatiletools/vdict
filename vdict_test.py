@@ -115,7 +115,18 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(test_dict.get("attr1/attr2/attr3/item1"), 1)
         self.assertEqual(test_dict.get("attr1/attr2/attr3/item2"), 2)
 
-    def test_7_json_data(self):
+    def test_7_with_list_data(self):
+        data = vdict()
+
+        data["files/0"] = "a.dat"
+        data["files/1"] = "b.dat"
+        data["files/2"] = "c.dat"
+
+        self.assertEqual(data["files/0"], "a.dat")
+        self.assertEqual(data["files/1"], "b.dat")
+        self.assertEqual(data["files/2"], "c.dat")
+
+    def test_8_json_data(self):
         json_data1 = """{
             "query": {
                 "filtered": {
