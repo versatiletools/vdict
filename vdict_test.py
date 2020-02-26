@@ -50,33 +50,39 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         test_dict = vdict()
 
         test_dict.a = 1
-        with self.assertRaises(KeyError):
-            test_dict['b']
+
+        self.assertRaises(KeyError, test_dict['b'])
         self.assertIsNone(test_dict.get('b'))
         self.assertEqual({}, test_dict.b)
 
         test_dict.attr1.attr2.attr3 = 1
         test_dict.attr1.attr2.attr4 = 2
 
-        with self.assertRaises(KeyError):
-            test_dict["attr1/attr2/attr5"]
-
-        with self.assertRaises(KeyError):
-            test_dict["attr1.attr3.attr2"]
+        self.assertRaises(KeyError, test_dict["attr1/attr2/attr5"])
+        self.assertRaises(KeyError, test_dict["attr1.attr3.attr2"])
 
         self.assertIsNone(test_dict.get("attr1/attr2/attr5"))
         self.assertIsNone(test_dict.get("attr1.attr3.attr2"))
         self.assertEqual({}, test_dict.attr1.attr2.attr5)
         self.assertEqual({}, test_dict.attr1.attr3.attr2)
 
-        with self.assertRaises(AttributeError):
+        try:
             test_dict.attr1.attr2.attr3.new_data = 1
+            self.fail("AttributeError must be raised.")
+        except Exception as e:
+            self.assertRaises(AttributeError, e)
 
     def test_5_setget_by_braces(self):
         name = vdict()
 
         name["given"] = "Sungho"
         name["family"] = "Park"
+        name["addr/city"] = "Seoul"
+        try:
+            name["family/first"] = "Junha"
+            self.fail("Must fail to assign data to object which is not a container.")
+        except TypeError:
+            pass
 
         info = vdict()
         info["name"] = name
@@ -88,6 +94,15 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(info["name/family"], "Park")
         self.assertEqual(info["name"], name)
         self.assertEqual(info["etc/addr/city"], "Seoul")
+
+        info["card/0/number"] = "12345"
+        info["card/1/number"] = "67890"
+        info["card/2"] = 100
+
+        self.assertEqual(info["card/0/number"], "12345")
+        self.assertEqual(info["card/1/number"], "67890")
+        self.assertEqual(info["card/2"], 100)
+
 
     def test_6_setget_by_attrs(self):
         test_dict = vdict()

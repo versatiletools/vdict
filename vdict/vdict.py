@@ -48,15 +48,16 @@ class vdict(dict):
 
     def __setattr__(self, key, value):
         if isinstance(value, dict):
-            self[key] = vdict(value)
-        else:
-            self[key] = value
+             value = vdict(value)
 
-    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+
+    def __setitem__(self, key, value, dict_setitem=dict.__setitem__):
         if isinstance(value, dict):
             value = vdict(value)
 
-        super().__setitem__(key, value)
+        # super().__setitem__(key, value)
+        self.add(key, value, dict_setitem)
 
     def __getitem__(self, item):
         return self.__get(item)
@@ -108,5 +109,76 @@ class vdict(dict):
         except KeyError as e:
             return None
 
+    def add(self, keypath, value, dict_setitem=dict.__setitem__):
+        """
+        Add list or dictionary data with key path
+        :param keypath: data path. eg) 0/a/b/d
+        :param value: data to store
+        :return: Nothing
+        """
+        assert (keypath is not None and value is not None)
+
+        keys = keypath.split("/")
+
+        result = self
+        key_size = len(keys)
+
+        for i in range(key_size):
+            key = keys[i]
+            if keys[i] == '':
+                continue
+
+            if self.is_number(key):
+                if self == {}:  # When the first date is list, throw a exception.
+                    raise TypeError(f"First data must not be a list")
+
+                key = int(key)
+                is_list_type = True
+            else:
+                is_list_type = False
+
+            # internal data must be a collection.
+            if i < key_size - 1:
+                # if not isinstance(result[key], dict) or not isinstance(result[key], list):
+                #     raise TypeError(f"{key} is not a collection object.")
+
+                try:
+                    result = result[key]
+                except KeyError:    # when dict
+                    if self.is_number(keys[i + 1]):
+                        dict_setitem(result, key, [])
+                    else:
+                        dict_setitem(result, key, {})
+
+                    result = result[key]
+                except IndexError:  # when list
+                    if self.is_number(keys[i + 1]):
+                        result.append([])
+                    else:
+                        result.append({})
+
+                    try:
+                        result = result[key]
+                    except IndexError:
+                        raise KeyError("list key '%d' is not linear." % key)
+                except TypeError as e :
+                    raise KeyError("Data type of the key is not match. %s" % e.args[0])
+            # at leaf
+            else:
+                if is_list_type:
+                    result.append(value)
+                else:
+                    # super().__setitem__(key, value)
+                    dict_setitem(result, key, value)
+
+                break
+
     def json(self):
         return json.dumps(self)
+
+    def is_number(self, data):
+        try:
+            int(data)
+            return True
+        except ValueError:
+            return False
