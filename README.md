@@ -80,8 +80,8 @@ You can set data to dictionary. Especially, you can set data in nested keys.
     v_dict = vdict()
     
     v_dict["query/sql/0/select"] = "name, address, phone"
-    v_dict["query/sql/1"] = new_vdict
-    v_dict["query/filtered"].add(new_filter)
+    v_dict["query/sql/1"] = new_select
+    v_dict["query/filtered" = new_filter
 
 
 ## Support data format
