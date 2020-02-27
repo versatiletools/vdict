@@ -36,12 +36,16 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
     def test_2_constuctors(self):
         dict_data = vdict({"a": 1, "b": 2, "c": "3"})
 
-        print(f"dict_data['a']   = {dict_data['a']}")
-        print(f"dict_data['b']   = {dict_data['b']}")
-        print(f"dict_data['c']   = {dict_data['c']}")
+        print(f"dict_data['a'] = {dict_data['a']}")
+        print(f"dict_data['b'] = {dict_data['b']}")
+        print(f"dict_data['c'] = {dict_data['c']}")
 
-        self.assertRaises(Exception, dict_data["a"])
-        self.assertRaises(Exception, dict_data.a)
+        with  self.assertRaises(KeyError):
+            dict_data["d"]
+
+        # TODO At this time, there is not way to find how many attributes are specified at code.
+        #  So dict_data.d.e return just a dict object instead of AttributeError. Fix this later.
+        self.assertEqual(dict_data.d.e, {})
 
         json_dict = vdict('{ "type": "CONNECT" }')
         self.assertEqual(json_dict["type"], "CONNECT")
@@ -140,6 +144,7 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(data["files/0"], "a.dat")
         self.assertEqual(data["files/1"], "b.dat")
         self.assertEqual(data["files/2"], "c.dat")
+        self.assertTrue(isinstance(data["files"], list))
 
     def test_8_json_data(self):
         json_data1 = """{
