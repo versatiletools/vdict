@@ -130,7 +130,7 @@ class vdict(dict):
 
             if self.is_number(key):
                 if self == {}:  # When the first date is list, throw a exception.
-                    raise TypeError(f"First data must not be a list")
+                    raise TypeError("First data must not be a list")
 
                 key = int(key)
                 is_list_type = True
@@ -139,9 +139,6 @@ class vdict(dict):
 
             # internal data must be a collection.
             if i < key_size - 1:
-                # if not isinstance(result[key], dict) or not isinstance(result[key], list):
-                #     raise TypeError(f"{key} is not a collection object.")
-
                 try:
                     result = result[key]
                 except KeyError:    # when dict

@@ -4,7 +4,7 @@ vdict(Versatile Dictionary) is a extension of python dict object for manipulate 
 
 ## Why use this?
 
-When we use dict object to manipulate JSON data in python. But it's not comfortable because JSON data contains nested and nested data.
+When we use a dict object to manipulate JSON data in python, it's not comfortable because many JSON data have nested structure.
 
 For example,
 
