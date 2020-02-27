@@ -1,34 +1,88 @@
-# vdict (Versatile Dictionary)
-Extension of python dict object for JSON data. When you use json file with Python,you should use json module. It is a good module, but it is too difficult to navigate deep json data like to below:
+# Overview
+## What is vdict?
+vdict(Versatile Dictionary) is a extension of python dict object for manipulate structured data such as a JSON data.
 
-~~~
- "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
-    "id": "38118",
-    "self": "http://jira.mysystem.com/rest/api/latest/issue/38118",
-    "key": "TS-17952",
-    "fields": {
-        "fixVersions": [],
-        "customfield_10110": null,
-        "customfield_11200": null,
-        "resolution": {
-            "self": "http://jira.mysystem.com/rest/api/2/resolution/10000",
-            "id": "10000",
-            "description": "GreenHopper Managed Resolution",
-            "name": "Done"
-        },
-        "issuelinks": [{
-            "outwardIssue": {
-                "id": "38116",
-                "key": "TS-17951",
-                "self": "http://jira.mysystem.com/rest/api/2/issue/38116",
-                "fields": {
-                    "summary": "My work",
-                    "status": {
-                        "self": "http://jira.mysystem.com/rest/api/2/status/6",
-                        "name": "Closed",
-                        "id": "6",
-                        "statusCategory": {
-                            "self": "http://jira.mysystem.com/rest/api/2/statuscategory/3",
-                            "id": 3,
-~~~
-With vdict, you can use it more easer than json module.
+## Why use this?
+
+When we use a dict object to manipulate JSON data in python, it's not comfortable because many JSON data have nested structure.
+
+For example,
+
+    json_data = """{
+        "query": {
+            "filtered": {
+                "query": {
+                    "match": {"language": "C/C++"}
+                },
+                "filter": {
+                    "term": {"created": "2018-11-23"}
+                }
+            }
+        }
+    }"""
+    
+    json_dict = json.load(json_data)
+
+If we want to get the value of 'description', we write the code like the following
+
+    value = json_dict['query']['filtered']['query']['match']['description']
+
+If the JSON is complicated, it makes our head complicated. Therefore we need more easy dictionary class for our head.
+
+# How to use
+
+## Getting value
+
+You can't avoid to use key names of JSON, but now you can avoid to use redundant square brackets with vdict.
+
+    value = json_dict['query/filtered/query/match/language']
+
+You can access array of JSON.
+
+    json_data = """
+        {
+            "query": {
+                "filtered": [{
+                    "query": {
+                        "match": {
+                            "language": "Python"
+                        }
+                    },
+                    "filter": {
+                        "term": {
+                            "created": "2019-03-05"
+                        }
+                    }
+                }, {
+                    "query": {
+                        "match": {
+                            "language": "C/C++"
+                        }
+                    },
+                    "filter": {
+                        "term": {
+                            "created": "2018-11-23"
+                        }
+                    }
+                }]
+            }
+        }
+    """
+    
+    # value is 'Python'
+    value = vdict["query/filtered/0/query/match/language"]
+    
+
+## Setting value
+
+You can set data to dictionary. Especially, you can set data in nested keys.
+
+    v_dict = vdict()
+    
+    v_dict["query/sql/0/select"] = "name, address, phone"
+    v_dict["query/sql/1"] = new_vdict
+    v_dict["query/filtered"].add(new_filter)
+
+
+## Support data format
+- JSON formats are supported.
