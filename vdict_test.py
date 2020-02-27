@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import unittest
 from vdict import vdict
@@ -51,26 +51,27 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
 
         test_dict.a = 1
 
-        self.assertRaises(KeyError, test_dict['b'])
+        with self.assertRaises(KeyError):
+            test_dict['b']
+
+        # self.assertRaises(KeyError, test_dict['b'])
         self.assertIsNone(test_dict.get('b'))
         self.assertEqual({}, test_dict.b)
 
         test_dict.attr1.attr2.attr3 = 1
         test_dict.attr1.attr2.attr4 = 2
 
-        self.assertRaises(KeyError, test_dict["attr1/attr2/attr5"])
-        self.assertRaises(KeyError, test_dict["attr1.attr3.attr2"])
+        with self.assertRaises(KeyError):
+            test_dict["attr1/attr2/attr5"]
+            test_dict["attr1.attr3.attr2"]
 
         self.assertIsNone(test_dict.get("attr1/attr2/attr5"))
         self.assertIsNone(test_dict.get("attr1.attr3.attr2"))
         self.assertEqual({}, test_dict.attr1.attr2.attr5)
         self.assertEqual({}, test_dict.attr1.attr3.attr2)
 
-        try:
+        with self.assertRaises(AttributeError):
             test_dict.attr1.attr2.attr3.new_data = 1
-            self.fail("AttributeError must be raised.")
-        except Exception as e:
-            self.assertRaises(AttributeError, e)
 
     def test_5_setget_by_braces(self):
         name = vdict()
@@ -103,7 +104,6 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(info["card/1/number"], "67890")
         self.assertEqual(info["card/2"], 100)
 
-
     def test_6_setget_by_attrs(self):
         test_dict = vdict()
 
@@ -120,7 +120,7 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(data, test_dict.dir1.seq)
 
         test_dict = vdict()
-        test_dict.attr1.attr2.attr3={"item1": 1, "item2": 2}
+        test_dict.attr1.attr2.attr3 = {"item1": 1, "item2": 2}
         self.assertEqual(test_dict.attr1.attr2.attr3.item1, 1)
         self.assertEqual(test_dict.attr1.attr2.attr3.item2, 2)
 
