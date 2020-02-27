@@ -83,11 +83,9 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         name["given"] = "Sungho"
         name["family"] = "Park"
         name["addr/city"] = "Seoul"
-        try:
+
+        with self.assertRaises(TypeError):
             name["family/first"] = "Junha"
-            self.fail("Must fail to assign data to object which is not a container.")
-        except TypeError:
-            pass
 
         info = vdict()
         info["name"] = name
@@ -107,6 +105,21 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(info["card/0/number"], "12345")
         self.assertEqual(info["card/1/number"], "67890")
         self.assertEqual(info["card/2"], 100)
+
+        query = vdict()
+        query["query/sql/0/select"] = name
+        query["query/sql/1"] = data3
+        query["query/filtered"] = info
+
+        self.assertEqual(query["query/sql/0/select/given"]    , "Sungho")
+        self.assertEqual(query["query/sql/0/select/family"]   , "Park")
+        self.assertEqual(query["query/sql/1/phone"]           , "123-4567")
+        self.assertEqual(query["query/sql/1/addr/country"]    , "Korea")
+        self.assertEqual(query["query/sql/1/addr/city"]       , "Seoul")
+        self.assertEqual(query["query/filtered/card/0/number"], "12345")
+        self.assertEqual(query["query/filtered/card/1/number"], "67890")
+        self.assertEqual(query["query/filtered/card/2"]       , 100)
+
 
     def test_6_setget_by_attrs(self):
         test_dict = vdict()
