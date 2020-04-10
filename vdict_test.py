@@ -212,6 +212,23 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
 
         self.assertEqual(v, "Python")
 
+    def test_9_sub_dict(self):
+        test_dict = vdict()
+
+        test_dict.a.b=1
+        print(test_dict.json())
+
+        test2 = test_dict.a
+        print(test2)
+        print(test2.__class__)
+
+        test2.b = 2
+        print(test_dict)
+        print(test2)
+
+
+        self.assertEqual(test_dict.a.b, test2.b)
+        self.assertTrue(isinstance(test2, vdict))
 
 if __name__ == '__main__':
     unittest.main()
