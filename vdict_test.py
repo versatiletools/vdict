@@ -215,6 +215,44 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
 
         self.assertEqual(v, "Python")
 
+    def test_9_sub_dict(self):
+        test_dict = vdict()
+
+        test_dict.a.b=1
+        print(test_dict.json())
+
+        test2 = test_dict.a
+        print(test2)
+        print(test2.__class__)
+
+        test2.b = 2
+        print(test_dict)
+        print(test_dict.a.json())
+        print(test2)
+
+        self.assertEqual(test_dict.a.b, test2.b)
+        self.assertTrue(isinstance(test2, vdict))
+
+        test2_dict = vdict()
+        test2_dict["sub1/sub2"] = 1
+        print(test2_dict.sub1.json())
+
+    def test_10_json_sub_dict(self):
+        json_data = {"type": "AUTH", "server": "1.1.1.1",
+                     "authentication": {"type": "BASIC", "id": "user", "password": "password"}}
+        jdict = vdict(json_data)
+
+        mdict = vdict()
+        mdict.type = "AUTH"
+        mdict.server="1.1.1.1"
+        mdict.authentication.type = "BASIC"
+        mdict.authentication.id = "user"
+        mdict.authentication.password = "password"
+
+        auth = jdict.authentication
+
+        self.assertEqual(mdict.authentication.type.__class__,
+                         jdict.authentication.type.__class__)
 
 if __name__ == '__main__':
     unittest.main()
