@@ -207,6 +207,9 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         v = data1["query/filtered/query/match/language"]
         self.assertEqual(v, "C/C++")
 
+        v = data1.query.filtered.query.match.language
+        self.assertEqual(v, "C/C++")
+
         data2 = vdict(json_data2)
         v = data2["query/filtered/0/query/match/language"]
 
