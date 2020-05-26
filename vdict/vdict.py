@@ -25,6 +25,12 @@ class vdict(dict):
         else:
             raise TypeError("Not supported data type.")
 
+    def __call__(self):
+        """
+        The same with __repr__ function.
+        """
+        self.__repr__()
+
     def __getattr__(self, item):
         """
         Get value of specified attributes.

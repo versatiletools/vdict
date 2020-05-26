@@ -254,5 +254,15 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(mdict.authentication.type.__class__,
                          jdict.authentication.type.__class__)
 
+    def test_11_callable(self):
+        json_data = {"type": "AUTH", "server": "1.1.1.1",
+                     "authentication": {"type": "BASIC", "id": "user", "password": "password"}}
+
+        json_dict = vdict(json_data)
+
+        print(json_dict())
+        self.assertIsNone(json_dict(), "Must be a callable object.")
+
+
 if __name__ == '__main__':
     unittest.main()
