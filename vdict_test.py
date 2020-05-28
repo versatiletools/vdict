@@ -263,6 +263,15 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         print(json_dict())
         self.assertIsNone(json_dict(), "Must be a callable object.")
 
+    def test_12_copy(self):
+        json_data = {"type": "AUTH", "server": "1.1.1.1",
+                     "authentication": {"type": "BASIC", "id": "user", "password": "password"}}
+        jdict = vdict(json_data)
+
+        mdict = jdict.copy()
+
+        self.assertTrue(isinstance(mdict, vdict))
+
 
 if __name__ == '__main__':
     unittest.main()
