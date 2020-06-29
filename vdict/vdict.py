@@ -6,6 +6,7 @@
 __author__ = 'Sungho Park'
 
 import json
+import copy
 
 
 class vdict(dict):
@@ -185,3 +186,6 @@ class vdict(dict):
             return True
         except ValueError:
             return False
+
+    def copy(self, deep=False):
+        return copy.copy(self) if deep is False else copy.deepcopy(self)
