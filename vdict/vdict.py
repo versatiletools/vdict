@@ -187,5 +187,25 @@ class vdict(dict):
         except ValueError:
             return False
 
-    def copy(self, deep=False):
-        return copy.copy(self) if deep is False else copy.deepcopy(self)
+    def copy(self):
+        """
+        shallow copy
+        """
+        return copy.copy(self)
+
+    def deepcopy(self):
+        """
+        deep copy
+        """
+        memo = {}
+        return copy.deepcopy(self, memo)
+
+    def __deepcopy__(self, memo):
+        newone = type(self)()
+
+        memo[id(self)] = newone
+
+        for key, value in self.items():
+            newone[copy.deepcopy(key, memo)] = copy.deepcopy(value, memo)
+
+        return newone

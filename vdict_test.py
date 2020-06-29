@@ -270,7 +270,7 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         jdict.funcs = ["A", "B"]
 
         adict = jdict.copy()
-        self.assertTrue(isinstance(adict, vdict))
+        self.assertTrue(isinstance(adict, vdict), "The copyied object must be a vdict.")
         self.assertFalse(adict is jdict)
         self.assertTrue(adict.funcs is jdict.funcs)
 
@@ -279,9 +279,37 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(jdict, adict)
         self.assertEqual(jdict.funcs, adict.funcs)
 
-        bdict = jdict.copy(False)
-        bdict.authentication.type = "DIFFICULT"
+    def test_13_deep_copy(self):
+        json_data = {"type": "AUTH", "server": "1.1.1.1",
+                     "authentication": {"type": "BASIC", "id": "user", "password": "password"}}
+        jdict = vdict(json_data)
+        jdict.funcs = ["A", "B"]
+
+        adict = jdict.deepcopy()
+        self.assertTrue(isinstance(adict, vdict))
+        self.assertFalse(adict is jdict)
+        self.assertFalse(adict.funcs is jdict.funcs)
+
+        jdict.funcs[0] = "C"
+        self.assertFalse(adict is jdict)
+        self.assertNotEqual(jdict, adict)
+        self.assertNotEqual(jdict.funcs, adict.funcs)
+
+        new_dict = vdict()
+        new_dict.name1 = "Sungho"
+        new_dict.name2 = "Junha"
+
+        jdict.names = new_dict
+
+        bdict = jdict.deepcopy()
         self.assertTrue(isinstance(bdict, vdict))
+        self.assertFalse(bdict is jdict)
+        self.assertEqual(bdict.names.name1, jdict.names.name1)
+        self.assertEqual(bdict.names.name2, jdict.names.name2)
+
+        bdict.names.name2 = "Juha"
+        self.assertEqual(bdict.names.name1, jdict.names.name1)
+        self.assertNotEqual(bdict.names.name2, jdict.names.name2)
 
 
 if __name__ == '__main__':
