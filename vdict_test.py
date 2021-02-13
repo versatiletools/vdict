@@ -5,50 +5,93 @@ from vdict import vdict
 
 
 class BasicDictionaryFunctionTestCase(unittest.TestCase):
-    def test_1_attr_and_brace_must_be_the_same(self):
-        print("1. With a plain vdict")
-        test_dict = vdict()
+    def test_1_constructors(self):
+        """
+        constructor with various data types.
+        """
 
-        test_dict.attr1 = "test data"
-        print(f" - test_dict.attr1    = '{test_dict.attr1}'")
-        print(f" - test_dict['attr1'] = '{test_dict['attr1']}'")
+        print("1. Constructing with a simple JSON")
+        json_str = '{ "a": 1, "b": 2, "c": "3"}'
+        json_vdict = vdict(json_str)
 
-        self.assertEqual(test_dict.attr1, test_dict['attr1'], "The values by attribute and brace must be the same.")
+        print(f"json_vdict['a'] = {json_vdict['a']}")
+        print(f"json_vdict['b'] = {json_vdict['b']}")
+        print(f"json_vdict['c'] = {json_vdict['c']}")
+
+        for i in range(1, 1000):
+            self.assertEqual(json_vdict['a'], 1)
+            self.assertEqual(json_vdict['b'], 2)
+            self.assertEqual(json_vdict['c'], "3")
+
+            with self.assertRaises(KeyError):
+                json_vdict["d"]
+
+        # TODO When you call sub attribute 'e' of not exist attribute 'd',
+        #  vdict don't know if the code is for setting or getting value.
+        #  So vdict just make dicts for 'd' and 'e'.
+        #  In fact, if the code is for getting value, vdict must throw AttributeError.
+        #  But now vdict return dict object. Fix this later.
+        self.assertEqual(json_vdict.d.e, {})
 
         print()
-        print("2. With a initialized vdict by JSON")
-        test_dict = vdict('{ "type": "CONNECT" }')
+        print("2. Constructing with a dict object.")
+        dict_data = {"a": 1, "b": 2, "c": "3"}
+        dict_data2 = {"firstname": "Sungho", "lastname": "Park", "mail": "chywoo@gmail.com", "nooffamily": 4}
+        dict_data["d"] = dict_data2
 
-        test_dict.attr1 = "test data"
-        print(f" - test_dict.attr1    = '{test_dict.attr1}'")
-        print(f" - test_dict['attr1'] = '{test_dict['attr1']}'")
+        dict_vdict = vdict(dict_data)
 
-        self.assertEqual(test_dict.attr1, test_dict['attr1'], "The values by attribute and brace must be the same.")
+        print(f"dict_vdict['a'] = {dict_vdict['a']}")
+        print(f"dict_vdict['b'] = {dict_vdict['b']}")
+        print(f"dict_vdict['c'] = {dict_vdict['c']}")
+        print(f"dict_vdict['d'] = {dict_vdict['d']}")
+
+        for i in range(1, 1000):
+            self.assertEqual(dict_vdict['a'], 1)
+            self.assertEqual(dict_vdict['b'], 2)
+            self.assertEqual(dict_vdict['c'], "3")
+            self.assertEqual(dict_vdict['d']['firstname'], "Sungho")
+            self.assertEqual(dict_vdict['d']['lastname'], "Park")
+            self.assertEqual(dict_vdict['d']['mail'], "chywoo@gmail.com")
+            self.assertEqual(dict_vdict['d']['nooffamily'], 4)
+
+            with self.assertRaises(KeyError):
+                json_vdict["e"]
+
+    def test_2_attr_and_brace_must_be_the_same(self):
+        """
+        Values added with attribute must be the same with values added with brace.
+        ex) value.key == value['key'].
+        """
+        print("1. With a plain vdict")
+        plain_vdict = vdict()
+
+        plain_vdict.attr1 = "test data"
+        print(f" - test_dict.attr1    = '{plain_vdict.attr1}'")
+        print(f" - test_dict['attr1'] = '{plain_vdict['attr1']}'")
+
+        self.assertEqual(plain_vdict.attr1, plain_vdict['attr1'],
+                         "The values by attribute and brace must be the same.")
+
+        print()
+        json_vdict = vdict()
+        print("2. With a vdict initialized by JSON")
+        json_vdict = vdict('{ "type": "CONNECT" }')
+        print(f" - test_dict.type    = '{json_vdict.type}'")
+        print(f" - test_dict['type'] = '{json_vdict['type']}'")
+
+        self.assertEqual(json_vdict.type, json_vdict['type'], "The values by attribute and brace must be the same.")
 
         print()
         print("3. With values of vdict initialized by JSON")
-        test_dict = vdict('{ "attr1": "test data" }')
-        print(f" - test_dict.attr1    = '{test_dict.attr1}'")
-        print(f" - test_dict['attr1'] = '{test_dict['attr1']}'")
+        jsonattr_vdict = vdict('{ "type": "CONNECT" }')
 
-        self.assertEqual(test_dict.attr1, test_dict['attr1'], "The values by attribute and brace must be the same.")
+        jsonattr_vdict.attr1 = "test data"
+        print(f" - test_dict.attr1    = '{jsonattr_vdict.attr1}'")
+        print(f" - test_dict['attr1'] = '{jsonattr_vdict['attr1']}'")
 
-    def test_2_constuctors(self):
-        dict_data = vdict({"a": 1, "b": 2, "c": "3"})
-
-        print(f"dict_data['a'] = {dict_data['a']}")
-        print(f"dict_data['b'] = {dict_data['b']}")
-        print(f"dict_data['c'] = {dict_data['c']}")
-
-        with  self.assertRaises(KeyError):
-            dict_data["d"]
-
-        # TODO At this time, there is not way to find how many attributes are specified at code.
-        #  So dict_data.d.e return just a dict object instead of AttributeError. Fix this later.
-        self.assertEqual(dict_data.d.e, {})
-
-        json_dict = vdict('{ "type": "CONNECT" }')
-        self.assertEqual(json_dict["type"], "CONNECT")
+        self.assertEqual(jsonattr_vdict.attr1, jsonattr_vdict['attr1'],
+                         "The values by attribute and brace must be the same.")
 
     def test_3_errors(self):
         test_dict = vdict()
@@ -119,7 +162,6 @@ class BasicDictionaryFunctionTestCase(unittest.TestCase):
         self.assertEqual(query["query/filtered/card/0/number"], "12345")
         self.assertEqual(query["query/filtered/card/1/number"], "67890")
         self.assertEqual(query["query/filtered/card/2"]       , 100)
-
 
     def test_6_setget_by_attrs(self):
         test_dict = vdict()
